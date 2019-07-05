@@ -14,7 +14,7 @@ Installation
 ------------
 
 
-Install the extension via composer: [trilobit-gmbh/contao-constants-bundle](https://packagist.org/packages/trilobit-gmbh/contao-constants-bundle).
+Install the extension via composer: [trilobit-gmbh/contao-zipuploads-bundle](https://packagist.org/packages/trilobit-gmbh/contao-zipuploads-bundle).
 
 Compatibility
 -------------
