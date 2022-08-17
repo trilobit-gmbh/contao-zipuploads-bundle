@@ -60,7 +60,5 @@ And update your database.
 Compatibility
 =============
 
-* Contao version ~4.4
-* Contao version ~4.9
-* PHP version ~7.2
-* PHP version ~7.3
+- Contao version ~4.9
+- Contao version ~4.13

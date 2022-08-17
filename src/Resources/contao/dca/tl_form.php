@@ -12,7 +12,7 @@ declare(strict_types=1);
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 
 PaletteManipulator::create()
-    ->addLegend('zipuploads_legend', 'config_legend', PaletteManipulator::POSITION_AFTER)
+    ->addLegend('zipuploads_legend', 'config_legend')
     ->addField('zipUploadedFiles', 'zipuploads_legend', PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_form')
 ;

@@ -11,6 +11,7 @@ namespace Trilobit\ZipuploadsBundle;
 
 use Contao\Config;
 use Contao\Date;
+use Contao\FilesModel;
 use Contao\StringUtil;
 use Contao\ZipWriter;
 
@@ -31,7 +32,7 @@ class HookProcessFormData
     public function zipUploadedFiles(&$arrSubmitted, $arrData, $arrFiles, $arrLabels, $that)
     {
         if (empty($arrData['zipUploadedFiles'])) {
-            return;
+            return false;
         }
         // Prepare simple tokens
         $time = time();
@@ -63,7 +64,7 @@ class HookProcessFormData
         );
 
         // Set upload folder
-        $objUploadFolder = \FilesModel::findByUuid($arrData['zipDestinationFolder']);
+        $objUploadFolder = FilesModel::findByUuid($arrData['zipDestinationFolder']);
 
         // The upload folder could not be found
         if (null === $objUploadFolder) {
@@ -82,7 +83,7 @@ class HookProcessFormData
             foreach ($arrTmpFiles as $strTmpFile) {
                 if (preg_match('/__[0-9]+\.'.preg_quote($strExtension, '/').'$/', $strTmpFile)) {
                     $strTmpFile = str_replace('.'.$strExtension, '', $strTmpFile);
-                    $intValue = (int) substr($strFile, (strrpos($strTmpFile, '_') + 1));
+                    $intValue = (int) substr($strFilename, (strrpos($strTmpFile, '_') + 1));
 
                     $offset = max($offset, $intValue);
                 }
