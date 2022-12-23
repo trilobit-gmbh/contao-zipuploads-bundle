@@ -6,15 +6,15 @@ With the Zipuploads bundle it is possible to put all the uploaded files of a for
 The Zipuploads bundle adds "file upload settings" to the form properties. There is then the option "summarize uploads in a ZIP". If this is set, the file name and storage location can be determined. The file name can be customized using simple tokens.
 
 Various simple tokens are available for this purpose:
-   
-    ##rand##: Random string via PHP function "uniqid('', true)"  
-    ##date##: current date analogous to Contao settings  
-    ##time##: current time analogous to Contao settings  
-    ##datim##: current date and time analogous to Contao settings  
-    as well as all form fields through ##form_*##  
+
+    ##rand##: Random string via PHP function "uniqid('', true)"
+    ##date##: current date analogous to Contao settings
+    ##time##: current time analogous to Contao settings
+    ##datim##: current date and time analogous to Contao settings
+    as well as all form fields through ##form_*##
 If the option "Get existing files" is set, a suffix will be added to the ZIP file, similar to the Contao core functionality.
 
-The ZIP is then available as a simple token, e.g. available in the Notification Center at 
+The ZIP is then available as a simple token, e.g. available in the Notification Center at
 
     ##form_autogeneretedZippedUploads##.
 
@@ -29,11 +29,11 @@ Mit dem Zipuploads Bundle werden "Datei-Upload-Einstellungen" zu den Formular-Ei
 
 Hierzu stehen verschiedene Simple-Tokens zur Verfügung:
 
-    ##rand##: Zufälliger String via PHP-Funktion "uniqid('', true)"  
-    ##date##: aktuelles Datum analog Contao-Einstellungen  
-    ##time##: aktuelle Uhrzeit analog Contao-Einstellungen  
-    ##datim##: aktuelles Datum und Uhrzeit analog Contao-Einstellungen  
-    sowie alle Formularfelder über ##form_*##  
+    ##rand##: Zufälliger String via PHP-Funktion "uniqid('', true)"
+    ##date##: aktuelles Datum analog Contao-Einstellungen
+    ##time##: aktuelle Uhrzeit analog Contao-Einstellungen
+    ##datim##: aktuelles Datum und Uhrzeit analog Contao-Einstellungen
+    sowie alle Formularfelder über ##form_*##
 Ist die Option "Bestehende Dateien erhalten" gesetzt, wird an die ZIP-Datei ein Suffix analog der Contao-Core-Funktionalität gehängt.
 
 Das ZIP steht im Anschluss als Simple-Token z.B. im Notification-Center zur Verfügung unter
@@ -54,11 +54,14 @@ Notification-Center
 Installation
 ============
 
-Install the extension via composer: [trilobit-gmbh/contao-zipuploads-bundle](https://packagist.org/packages/trilobit-gmbh/contao-zipuploads-bundle).  
+Install the extension via composer: [trilobit-gmbh/contao-zipuploads-bundle](https://packagist.org/packages/trilobit-gmbh/contao-zipuploads-bundle).
 And update your database.
 
+
+
 Compatibility
-=============
+-------------
 
 - Contao version ~4.9
 - Contao version ~4.13
+- Contao version ~5.0
