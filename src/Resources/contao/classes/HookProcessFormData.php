@@ -1,18 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  trilobit GmbH
  * @author     trilobit GmbH <https://github.com/trilobit-gmbh>
  * @license    LGPL-3.0-or-later
- * @link       http://github.com/trilobit-gmbh/contao-zipuploads-bundle
  */
 
 namespace Trilobit\ZipuploadsBundle;
 
 use Contao\Config;
+use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\Date;
 use Contao\FilesModel;
 use Contao\StringUtil;
+use Contao\System;
 use Contao\ZipWriter;
 
 /**
@@ -37,6 +40,8 @@ class HookProcessFormData
         // Prepare simple tokens
         $time = time();
 
+        $rootDir = System::getContainer()->getParameter('kernel.project_dir');
+
         $arrTokens = [
             'rand' => uniqid('', true),
             'date' => Date::parse(Config::get('dateFormat'), $time),
@@ -55,13 +60,21 @@ class HookProcessFormData
         // Set zip file name
         $strExtension = 'zip';
 
-        $strFilename = StringUtil::generateAlias(
-            StringUtil::parseSimpleTokens(
-                StringUtil::decodeEntities(
-                    $arrData['zipFilename']
-                ), $arrTokens
-            )
-        );
+        $version = (method_exists(ContaoCoreBundle::class, 'getVersion') ? ContaoCoreBundle::getVersion() : VERSION);
+
+        if (version_compare($version, '5.0', '>=')) {
+            $strFilename = StringUtil::generateAlias(System::getContainer()->get('contao.string.simple_token_parser')->parse(StringUtil::decodeEntities(
+                $arrData['zipFilename']
+            ), $arrTokens));
+        } else {
+            $strFilename = StringUtil::generateAlias(
+                StringUtil::parseSimpleTokens(
+                    StringUtil::decodeEntities(
+                        $arrData['zipFilename']
+                    ), $arrTokens
+                )
+            );
+        }
 
         // Set upload folder
         $objUploadFolder = FilesModel::findByUuid($arrData['zipDestinationFolder']);
@@ -74,10 +87,10 @@ class HookProcessFormData
         $strUploadFolder = $objUploadFolder->path;
 
         // Do not overwrite existing files
-        if (!empty($arrData['zipDoNotOverwrite']) && file_exists(TL_ROOT.'/'.$strUploadFolder.'/'.$strFilename.'.'.$strExtension)) {
+        if (!empty($arrData['zipDoNotOverwrite']) && file_exists($rootDir.'/'.$strUploadFolder.'/'.$strFilename.'.'.$strExtension)) {
             $offset = 1;
 
-            $arrTmpAll = scan(TL_ROOT.'/'.$strUploadFolder);
+            $arrTmpAll = scan($rootDir.'/'.$strUploadFolder);
             $arrTmpFiles = preg_grep('/^'.preg_quote($strFilename, '/').'.*\.'.preg_quote($strExtension, '/').'/', $arrTmpAll);
 
             foreach ($arrTmpFiles as $strTmpFile) {
@@ -101,7 +114,7 @@ class HookProcessFormData
                 && $value['size'] > 0
                 && file_exists($value['tmp_name'])
             ) {
-                $value['tmp_name'] = str_replace(TL_ROOT.'/', '', $value['tmp_name']);
+                $value['tmp_name'] = str_replace($rootDir.'/', '', $value['tmp_name']);
                 $objZip->addFile($value['tmp_name'], $value['name']);
             }
         }
