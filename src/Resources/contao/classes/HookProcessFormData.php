@@ -12,7 +12,9 @@ namespace Trilobit\ZipuploadsBundle;
 
 use Contao\Config;
 use Contao\CoreBundle\ContaoCoreBundle;
+use Contao\Database;
 use Contao\Date;
+use Contao\Dbafs;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Contao\System;
@@ -34,14 +36,40 @@ class HookProcessFormData
      */
     public function zipUploadedFiles(&$arrSubmitted, $arrData, $arrFiles, $arrLabels, $that)
     {
+        echo '<pre>';
+
         if (empty($arrData['zipUploadedFiles'])) {
             return false;
         }
-        // Prepare simple tokens
+
         $time = time();
 
         $rootDir = System::getContainer()->getParameter('kernel.project_dir');
+        $strExtension = 'zip';
+        $version = (method_exists(ContaoCoreBundle::class, 'getVersion') ? ContaoCoreBundle::getVersion() : VERSION);
 
+        $fields = Database::getInstance()
+            ->prepare("SELECT name FROM tl_form_field WHERE pid=? AND type=? AND invisible='' ORDER BY sorting")
+            ->execute($arrData['id'], 'fineUploader')
+        ;
+
+        while ($fields->next()) {
+            foreach ($arrSubmitted[$fields->name] as $key => $value) {
+                $upload = Dbafs::addResource($value);
+
+                $arrFiles[$fields->name.'_'.$key] = [
+                    'name' => $upload->name,
+                    'type' => '',
+                    'tmp_name' => $rootDir.'/'.$upload->path,
+                    'error' => 0,
+                    'size' => filesize($rootDir.'/'.$upload->path),
+                    'uploaded' => (version_compare($version, '5.0', '>=')) ? true : 1,
+                    'uuid' => StringUtil::binToUuid($upload->uuid),
+                ];
+            }
+        }
+
+        // Prepare simple tokens
         $arrTokens = [
             'rand' => uniqid('', true),
             'date' => Date::parse(Config::get('dateFormat'), $time),
@@ -58,10 +86,6 @@ class HookProcessFormData
         }
 
         // Set zip file name
-        $strExtension = 'zip';
-
-        $version = (method_exists(ContaoCoreBundle::class, 'getVersion') ? ContaoCoreBundle::getVersion() : VERSION);
-
         if (version_compare($version, '5.0', '>=')) {
             $strFilename = StringUtil::generateAlias(System::getContainer()->get('contao.string.simple_token_parser')->parse(StringUtil::decodeEntities(
                 $arrData['zipFilename']
@@ -109,10 +133,11 @@ class HookProcessFormData
         $objZip = new ZipWriter($strUploadFolder.'/'.$strFilename.'.'.$strExtension);
 
         foreach ($arrFiles as $value) {
-            if ($value['uploaded']
-                && 0 === $value['error']
-                && $value['size'] > 0
-                && file_exists($value['tmp_name'])
+            if (is_array($value)
+                && isset($value['uploaded']) && $value['uploaded']
+                && isset($value['error']) && 0 === $value['error']
+                && isset($value['size']) && 0 < $value['size']
+                && isset($value['tmp_name']) && file_exists($value['tmp_name'])
             ) {
                 $value['tmp_name'] = str_replace($rootDir.'/', '', $value['tmp_name']);
                 $objZip->addFile($value['tmp_name'], $value['name']);
