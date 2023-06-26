@@ -51,7 +51,7 @@ class HookProcessFormData
         ;
 
         while ($fields->next()) {
-            if (isset($arrSubmitted[$fields->name]) && is_array($arrSubmitted[$fields->name])) {
+            if (isset($arrSubmitted[$fields->name]) && \is_array($arrSubmitted[$fields->name])) {
                 foreach ($arrSubmitted[$fields->name] as $key => $value) {
                     if ($fields->addToDbafs) {
                         $value = \Contao\FilesModel::findByUuid($value)->path;
