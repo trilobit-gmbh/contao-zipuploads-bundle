@@ -46,13 +46,17 @@ class HookProcessFormData
         $version = (method_exists(ContaoCoreBundle::class, 'getVersion') ? ContaoCoreBundle::getVersion() : VERSION);
 
         $fields = Database::getInstance()
-            ->prepare("SELECT name FROM tl_form_field WHERE pid=? AND type=? AND invisible='' ORDER BY sorting")
+            ->prepare("SELECT name, addToDbafs FROM tl_form_field WHERE pid=? AND type=? AND invisible='' ORDER BY sorting")
             ->execute($arrData['id'], 'fineUploader')
         ;
 
         while ($fields->next()) {
             if (isset($arrSubmitted[$fields->name]) && is_array($arrSubmitted[$fields->name])) {
                 foreach ($arrSubmitted[$fields->name] as $key => $value) {
+                    if ($fields->addToDbafs) {
+                        $value = \Contao\FilesModel::findByUuid($value)->path;
+                    }
+
                     if (!is_file($rootDir.'/'.$value)) {
                         continue;
                     }
