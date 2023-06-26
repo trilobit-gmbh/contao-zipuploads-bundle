@@ -14,7 +14,6 @@ use Contao\Config;
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\Database;
 use Contao\Date;
-use Contao\Dbafs;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Contao\System;
@@ -54,18 +53,22 @@ class HookProcessFormData
         ;
 
         while ($fields->next()) {
-            foreach ($arrSubmitted[$fields->name] as $key => $value) {
-                $upload = Dbafs::addResource($value);
+            if (isset($arrSubmitted[$fields->name]) && is_array($arrSubmitted[$fields->name])) {
+                foreach ($arrSubmitted[$fields->name] as $key => $value) {
+                    if (!is_file($rootDir.'/'.$value)) {
+                        continue;
+                    }
 
-                $arrFiles[$fields->name.'_'.$key] = [
-                    'name' => $upload->name,
-                    'type' => '',
-                    'tmp_name' => $rootDir.'/'.$upload->path,
-                    'error' => 0,
-                    'size' => filesize($rootDir.'/'.$upload->path),
-                    'uploaded' => (version_compare($version, '5.0', '>=')) ? true : 1,
-                    'uuid' => StringUtil::binToUuid($upload->uuid),
-                ];
+                    $pathParts = pathinfo($value);
+
+                    $arrFiles[$fields->name.'_'.$key] = [
+                        'name' => $pathParts['basename'],
+                        'tmp_name' => $rootDir.'/'.$value,
+                        'error' => 0,
+                        'size' => filesize($rootDir.'/'.$value),
+                        'uploaded' => (version_compare($version, '5.0', '>=')) ? true : 1,
+                    ];
+                }
             }
         }
 
