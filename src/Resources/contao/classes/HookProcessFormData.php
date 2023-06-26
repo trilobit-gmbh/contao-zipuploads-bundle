@@ -35,8 +35,6 @@ class HookProcessFormData
      */
     public function zipUploadedFiles(&$arrSubmitted, $arrData, $arrFiles, $arrLabels, $that)
     {
-        echo '<pre>';
-
         if (empty($arrData['zipUploadedFiles'])) {
             return false;
         }
