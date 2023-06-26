@@ -133,7 +133,7 @@ class HookProcessFormData
         $objZip = new ZipWriter($strUploadFolder.'/'.$strFilename.'.'.$strExtension);
 
         foreach ($arrFiles as $value) {
-            if (is_array($value)
+            if (\is_array($value)
                 && isset($value['uploaded']) && $value['uploaded']
                 && isset($value['error']) && 0 === $value['error']
                 && isset($value['size']) && 0 < $value['size']

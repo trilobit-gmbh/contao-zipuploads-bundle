@@ -32,7 +32,7 @@ class Plugin implements BundlePluginInterface
             BundleConfig::create(TrilobitZipuploadsBundle::class)
                 ->setLoadAfter([
                     ContaoCoreBundle::class,
-                    \Terminal42\FineUploaderBundle\Terminal42FineUploaderBundle::class
+                    \Terminal42\FineUploaderBundle\Terminal42FineUploaderBundle::class,
                 ]),
         ];
     }
