@@ -52,8 +52,7 @@ class HookProcessFormData
 
         while ($fields->next()) {
             if (isset($arrSubmitted[$fields->name]) && !empty($arrSubmitted[$fields->name])) {
-
-                if (is_string($arrSubmitted[$fields->name])) {
+                if (\is_string($arrSubmitted[$fields->name])) {
                     $uploads = [$arrSubmitted[$fields->name]];
                 } else {
                     $uploads = $arrSubmitted[$fields->name];
@@ -61,7 +60,7 @@ class HookProcessFormData
 
                 foreach ($uploads as $key => $value) {
                     if ($fields->addToDbafs) {
-                        $value = \Contao\FilesModel::findByUuid($value)->path;
+                        $value = FilesModel::findByUuid($value)->path;
                     }
 
                     if (!is_file($rootDir.'/'.$value)) {
