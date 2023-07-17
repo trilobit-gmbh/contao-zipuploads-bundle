@@ -14,6 +14,7 @@ use Contao\Config;
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\Database;
 use Contao\Date;
+use Contao\Dbafs;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Contao\System;
@@ -152,10 +153,16 @@ class HookProcessFormData
             ) {
                 $value['tmp_name'] = str_replace($rootDir.'/', '', $value['tmp_name']);
                 $objZip->addFile($value['tmp_name'], $value['name']);
+
+                if (!empty($arrData['zipDeleteUploadsAfterZip'])) {
+                    unlink($value['tmp_name']);
+                }
             }
         }
 
         $objZip->close();
+
+        Dbafs::addResource($strUploadFolder.'/'.$strFilename.'.'.$strExtension);
 
         // Append new field with zip-file data
         $arrSubmitted['autogeneretedZippedUploads'] = $strUploadFolder.'/'.$strFilename.'.'.$strExtension;
