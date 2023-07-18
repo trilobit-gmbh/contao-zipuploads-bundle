@@ -17,7 +17,9 @@ PaletteManipulator::create()
 ;
 
 $GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'zipUploadedFiles';
-$GLOBALS['TL_DCA']['tl_form']['subpalettes']['zipUploadedFiles'] = 'zipFilename,zipDoNotOverwrite,zipDestinationFolder';
+$GLOBALS['TL_DCA']['tl_form']['palettes']['__selector__'][] = 'zipAutomaticallyDeleteZipfiles';
+$GLOBALS['TL_DCA']['tl_form']['subpalettes']['zipUploadedFiles'] = 'zipFilename,zipDoNotOverwrite,zipDestinationFolder,zipDeleteUploadsAfterZip,zipAutomaticallyDeleteZipfiles';
+$GLOBALS['TL_DCA']['tl_form']['subpalettes']['zipAutomaticallyDeleteZipfiles'] = 'zipPeriodZipfilesMaintenance';
 
 $GLOBALS['TL_DCA']['tl_form']['fields']['zipUploadedFiles'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_form']['zipUploadedFiles'],
@@ -52,4 +54,30 @@ $GLOBALS['TL_DCA']['tl_form']['fields']['zipDestinationFolder'] = [
     'inputType' => 'fileTree',
     'eval' => ['mandatory' => true, 'fieldType' => 'radio', 'tl_class' => 'clr'],
     'sql' => 'binary(16) NULL',
+];
+
+$GLOBALS['TL_DCA']['tl_form']['fields']['zipDeleteUploadsAfterZip'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_form']['zipDeleteUploadsAfterZip'],
+    'exclude' => true,
+    'filter' => true,
+    'inputType' => 'checkbox',
+    'eval' => ['tl_class' => 'w50'],
+    'sql' => "char(1) NOT NULL default ''",
+];
+$GLOBALS['TL_DCA']['tl_form']['fields']['zipAutomaticallyDeleteZipfiles'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_form']['zipAutomaticallyDeleteZipfiles'],
+    'exclude' => true,
+    'filter' => true,
+    'inputType' => 'checkbox',
+    'eval' => ['submitOnChange' => true, 'tl_class' => 'clr w50'],
+    'sql' => "char(1) NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_form']['fields']['zipPeriodZipfilesMaintenance'] = [
+    'label' => &$GLOBALS['TL_LANG']['tl_form']['zipPeriodZipfilesMaintenance'],
+    'exclude' => true,
+    'search' => true,
+    'inputType' => 'text',
+    'eval' => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+    'sql' => "varchar(255) NOT NULL default ''",
 ];

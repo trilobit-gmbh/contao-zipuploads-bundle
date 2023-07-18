@@ -1,0 +1,8 @@
+services:
+    trilobit.zipuploads.processFormData:
+        class: Trilobit\ZipuploadsBundle\EventListener\ProcessFormDataListener
+        public: true
+
+    trilobit.zipuploads.cron:
+        class: Trilobit\ZipuploadsBundle\Cron\Cron
+        public: true
