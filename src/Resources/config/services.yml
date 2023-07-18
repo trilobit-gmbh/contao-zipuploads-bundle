@@ -1,0 +1,5 @@
+services:
+    _instanceof:
+        Symfony\Component\DependencyInjection\ContainerAwareInterface:
+            calls:
+                - ['setContainer', ['@service_container']]

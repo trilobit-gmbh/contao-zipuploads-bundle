@@ -8,21 +8,25 @@ declare(strict_types=1);
  * @license    LGPL-3.0-or-later
  */
 
-namespace Trilobit\ZipuploadsBundle;
+namespace Trilobit\ZipuploadsBundle\EventListener;
 
 use Contao\Config;
 use Contao\CoreBundle\ContaoCoreBundle;
+use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Database;
 use Contao\Date;
+use Contao\Dbafs;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\ZipWriter;
 
 /**
- * Class HookProcessFormData.
+ * Class ProcessFormDataListener.
+ *
+ * @Hook("processFormData")
  */
-class HookProcessFormData
+class ProcessFormDataListener
 {
     /**
      * @param $arrSubmitted
@@ -33,7 +37,7 @@ class HookProcessFormData
      *
      * @throws \Exception
      */
-    public function zipUploadedFiles(&$arrSubmitted, $arrData, $arrFiles, $arrLabels, $that)
+    public function __invoke(&$arrSubmitted, $arrData, $arrFiles, $arrLabels, $that)
     {
         if (empty($arrData['zipUploadedFiles'])) {
             return false;
@@ -152,10 +156,16 @@ class HookProcessFormData
             ) {
                 $value['tmp_name'] = str_replace($rootDir.'/', '', $value['tmp_name']);
                 $objZip->addFile($value['tmp_name'], $value['name']);
+
+                if (!empty($arrData['zipDeleteUploadsAfterZip'])) {
+                    unlink($value['tmp_name']);
+                }
             }
         }
 
         $objZip->close();
+
+        Dbafs::addResource($strUploadFolder.'/'.$strFilename.'.'.$strExtension);
 
         // Append new field with zip-file data
         $arrSubmitted['autogeneretedZippedUploads'] = $strUploadFolder.'/'.$strFilename.'.'.$strExtension;
