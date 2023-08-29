@@ -21,11 +21,6 @@ use Contao\StringUtil;
 use Contao\System;
 use Contao\ZipWriter;
 
-/**
- * Class ProcessFormDataListener.
- *
- * @Hook("processFormData")
- */
 class ProcessFormDataListener
 {
     /**
