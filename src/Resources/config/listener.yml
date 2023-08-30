@@ -2,6 +2,8 @@ services:
     trilobit.zipuploads.processFormData:
         class: Trilobit\ZipuploadsBundle\EventListener\ProcessFormDataListener
         public: true
+        tags:
+            - { name: contao.hook, hook: processFormData, priority: 100 }
 
     trilobit.zipuploads.cron:
         class: Trilobit\ZipuploadsBundle\Cron\Cron
