@@ -37,6 +37,7 @@ class Cron
         ;
 
         $container = System::getContainer();
+        $rootDir = $container->getParameter('kernel.project_dir');
         $logger = $container->get('monolog.logger.contao');
 
         $search = ['/[^\pN\pL \.\&\/_-]+/u', '/[ \.\&\/-]+/'];
@@ -50,16 +51,24 @@ class Cron
         ];
 
         foreach ($result as $value) {
-            $dir = FilesModel::findByUuid($value['zipDestinationFolder'])->path;
+            $dir = FilesModel::findByUuid($value['zipDestinationFolder']);
+
+            if (empty($dir)) {
+                continue;
+            }
+
+            $dir = $rootDir.'/'.$dir->path;
+
             $timeout = strtotime($value['zipPeriodZipfilesMaintenance']);
             $regex = '^'.$value['zipFilename'].'\.zip$';
 
             foreach ($tokens as $tokenKey => $tokenValue) {
                 $regex = str_replace($tokenKey, $tokenValue, $regex);
             }
+
             $regex = \Safe\preg_replace('/&#35;&#35;form_.*?&#35;&#35;/', '(.*?)', $regex);
 
-            if (file_exists($dir)) {
+            if (is_dir($dir)) {
                 $files = new DirectoryIterator($dir);
 
                 foreach ($files as $file) {
