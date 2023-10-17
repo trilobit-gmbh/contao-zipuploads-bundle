@@ -16,6 +16,7 @@ use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Database;
 use Contao\Date;
 use Contao\Dbafs;
+use Contao\File;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Contao\System;
@@ -159,6 +160,9 @@ class ProcessFormDataListener
         }
 
         $objZip->close();
+
+        $zipFile = new File($strUploadFolder.'/'.$strFilename.'.'.$strExtension);
+        $zipFile->chmod(0666 & ~umask());
 
         Dbafs::addResource($strUploadFolder.'/'.$strFilename.'.'.$strExtension);
 
