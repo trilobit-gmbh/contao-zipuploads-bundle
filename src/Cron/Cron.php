@@ -25,20 +25,25 @@ use Psr\Log\LogLevel;
  */
 class Cron
 {
+    public function __construct(\Contao\CoreBundle\Framework\ContaoFramework $framework)
+    {
+        $framework->initialize();
+    }
+
     /**
      * @throws \Exception
      */
     public function __invoke(): void
     {
-        $result = Database::getInstance()
-            ->prepare("SELECT zipFilename, zipDestinationFolder, zipPeriodZipfilesMaintenance FROM tl_form WHERE zipUploadedFiles!='' AND zipAutomaticallyDeleteZipfiles!=''")
-            ->execute()
-            ->fetchAllAssoc()
-        ;
-
         $container = System::getContainer();
         $rootDir = $container->getParameter('kernel.project_dir');
         $logger = $container->get('monolog.logger.contao');
+        $connection = $container->get('database_connection');
+
+        $result = $connection
+            ->executeQuery("SELECT zipFilename, zipDestinationFolder, zipPeriodZipfilesMaintenance FROM tl_form WHERE zipUploadedFiles!='' AND zipAutomaticallyDeleteZipfiles!=''")
+            ->fetchAllAssociative()
+        ;
 
         $search = ['/[^\pN\pL \.\&\/_-]+/u', '/[ \.\&\/-]+/'];
         $replace = ['', '-'];

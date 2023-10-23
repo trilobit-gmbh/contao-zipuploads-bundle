@@ -3,3 +3,9 @@ services:
         Symfony\Component\DependencyInjection\ContainerAwareInterface:
             calls:
                 - ['setContainer', ['@service_container']]
+
+    trilobit.zipuploads.cron:
+        class: Trilobit\ZipuploadsBundle\Cron\Cron
+        public: true
+        arguments:
+            - '@contao.framework'
