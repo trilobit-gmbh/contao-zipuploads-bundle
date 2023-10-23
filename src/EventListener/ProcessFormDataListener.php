@@ -12,7 +12,6 @@ namespace Trilobit\ZipuploadsBundle\EventListener;
 
 use Contao\Config;
 use Contao\CoreBundle\ContaoCoreBundle;
-use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Database;
 use Contao\Date;
 use Contao\Dbafs;

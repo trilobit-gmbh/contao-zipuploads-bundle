@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Trilobit\ZipuploadsBundle\Cron;
 
 use Contao\Config;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\CoreBundle\ServiceAnnotation\CronJob;
-use Contao\Database;
 use Contao\Date;
 use Contao\FilesModel;
 use Contao\System;
@@ -25,7 +25,7 @@ use Psr\Log\LogLevel;
  */
 class Cron
 {
-    public function __construct(\Contao\CoreBundle\Framework\ContaoFramework $framework)
+    public function __construct(ContaoFramework $framework)
     {
         $framework->initialize();
     }
