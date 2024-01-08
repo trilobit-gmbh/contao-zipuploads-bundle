@@ -4,7 +4,3 @@ services:
         public: true
         tags:
             - { name: contao.hook, hook: processFormData, priority: 100 }
-
-    trilobit.zipuploads.cron:
-        class: Trilobit\ZipuploadsBundle\Cron\Cron
-        public: true

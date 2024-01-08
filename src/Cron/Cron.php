@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace Trilobit\ZipuploadsBundle\Cron;
 
 use Contao\Config;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\CoreBundle\ServiceAnnotation\CronJob;
-use Contao\Database;
 use Contao\Date;
 use Contao\FilesModel;
 use Contao\System;
@@ -25,20 +25,25 @@ use Psr\Log\LogLevel;
  */
 class Cron
 {
+    public function __construct(ContaoFramework $framework)
+    {
+        $framework->initialize();
+    }
+
     /**
      * @throws \Exception
      */
     public function __invoke(): void
     {
-        $result = Database::getInstance()
-            ->prepare("SELECT zipFilename, zipDestinationFolder, zipPeriodZipfilesMaintenance FROM tl_form WHERE zipUploadedFiles!='' AND zipAutomaticallyDeleteZipfiles!=''")
-            ->execute()
-            ->fetchAllAssoc()
-        ;
-
         $container = System::getContainer();
         $rootDir = $container->getParameter('kernel.project_dir');
         $logger = $container->get('monolog.logger.contao');
+        $connection = $container->get('database_connection');
+
+        $result = $connection
+            ->executeQuery("SELECT zipFilename, zipDestinationFolder, zipPeriodZipfilesMaintenance FROM tl_form WHERE zipUploadedFiles!='' AND zipAutomaticallyDeleteZipfiles!=''")
+            ->fetchAllAssociative()
+        ;
 
         $search = ['/[^\pN\pL \.\&\/_-]+/u', '/[ \.\&\/-]+/'];
         $replace = ['', '-'];
