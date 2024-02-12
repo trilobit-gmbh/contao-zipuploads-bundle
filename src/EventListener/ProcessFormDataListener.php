@@ -147,7 +147,16 @@ class ProcessFormDataListener
         }
 
         // Set zip
-        $objZip = new ZipWriter($strUploadFolder.'/'.$strFilename.'.'.$strExtension);
+
+        // use php zip ext because of problems with umlauts and other special characters in zipped files with the contao zipwriter
+        $objZip =  new \ZipArchive();
+        //$objZip = new ZipWriter($strUploadFolder.'/'.$strFilename.'.'.$strExtension);
+
+        if (true !== $objZip->open($rootDir.'/'.$strUploadFolder.'/'.$strFilename.'.'.$strExtension, \ZipArchive::CREATE)) {
+            throw new \Exception('Cannot open '.$rootDir.'/'.$strUploadFolder.'/'.$strFilename.'.'.$strExtension);
+        }
+
+        var_dump($rootDir.'/'.$strUploadFolder.'/'.$strFilename.'.'.$strExtension);
 
         foreach ($arrFiles as $value) {
             if (\is_array($value)
@@ -156,16 +165,31 @@ class ProcessFormDataListener
                 && isset($value['size']) && 0 < $value['size']
                 && isset($value['tmp_name']) && file_exists($value['tmp_name'])
             ) {
-                $value['tmp_name'] = str_replace($rootDir.'/', '', $value['tmp_name']);
-                $objZip->addFile($value['tmp_name'], $value['name']);
+                /*
+                $objZip->addFile(
+                    str_replace($rootDir.'/', '', $value['tmp_name']),
+                    mb_convert_encoding(utf8_decode($value['name']), 'ISO-8859-1', 'UTF-8')
+                );
 
                 if (!empty($arrData['zipDeleteUploadsAfterZip'])) {
                     unlink($value['tmp_name']);
                 }
+                */
+
+                $objZip->addFile(
+                    $value['tmp_name'],
+                    $value['name']
+                );
             }
         }
 
         $objZip->close();
+
+        if (!empty($arrData['zipDeleteUploadsAfterZip'])) {
+            foreach ($arrFiles as $value) {
+                unlink($value['tmp_name']);
+            }
+        }
 
         $zipFile = new File($strUploadFolder.'/'.$strFilename.'.'.$strExtension);
         $zipFile->chmod(0666 & ~umask());
