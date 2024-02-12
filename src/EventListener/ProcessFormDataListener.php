@@ -156,8 +156,6 @@ class ProcessFormDataListener
             throw new \Exception('Cannot open '.$rootDir.'/'.$strUploadFolder.'/'.$strFilename.'.'.$strExtension);
         }
 
-        var_dump($rootDir.'/'.$strUploadFolder.'/'.$strFilename.'.'.$strExtension);
-
         foreach ($arrFiles as $value) {
             if (\is_array($value)
                 && isset($value['uploaded']) && $value['uploaded']
