@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": "^7.3 || ^8.0",
+        "ext-zip": "*",
         "contao/core-bundle": "^4.9 || ^5.0"
     },
     "require-dev": {
