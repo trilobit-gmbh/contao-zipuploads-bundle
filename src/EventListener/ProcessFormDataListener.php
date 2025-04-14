@@ -17,6 +17,7 @@ use Contao\Date;
 use Contao\Dbafs;
 use Contao\File;
 use Contao\FilesModel;
+use Contao\Folder;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\ZipWriter;
@@ -131,7 +132,7 @@ class ProcessFormDataListener
         if (!empty($arrData['zipDoNotOverwrite']) && file_exists($rootDir.'/'.$strUploadFolder.'/'.$strFilename.'.'.$strExtension)) {
             $offset = 1;
 
-            $arrTmpAll = scan($rootDir.'/'.$strUploadFolder);
+            $arrTmpAll = Folder::scan($rootDir.'/'.$strUploadFolder);
             $arrTmpFiles = preg_grep('/^'.preg_quote($strFilename, '/').'.*\.'.preg_quote($strExtension, '/').'/', $arrTmpAll);
 
             foreach ($arrTmpFiles as $strTmpFile) {
