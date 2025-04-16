@@ -33,6 +33,7 @@ class Plugin implements BundlePluginInterface
                 ->setLoadAfter([
                     ContaoCoreBundle::class,
                     \Terminal42\FineUploaderBundle\Terminal42FineUploaderBundle::class,
+                    \Terminal42\NotificationCenterBundle\NotificationCenter::class,
                 ]),
         ];
     }

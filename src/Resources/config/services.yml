@@ -4,6 +4,10 @@ services:
             calls:
                 - ['setContainer', ['@service_container']]
 
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
     trilobit.zipuploads.cron:
         class: Trilobit\ZipuploadsBundle\Cron\Cron
         public: true
