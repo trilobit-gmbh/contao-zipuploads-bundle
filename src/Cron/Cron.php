@@ -71,7 +71,7 @@ class Cron
                 $regex = str_replace($tokenKey, $tokenValue, $regex);
             }
 
-            $regex = \Safe\preg_replace('/&#35;&#35;form_.*?&#35;&#35;/', '(.*?)', $regex);
+            $regex = preg_replace('/&#35;&#35;form_.*?&#35;&#35;/', '(.*?)', $regex);
 
             if (is_dir($dir)) {
                 $files = new DirectoryIterator($dir);
