@@ -1,12 +1,11 @@
 services:
-    _instanceof:
-        Symfony\Component\DependencyInjection\ContainerAwareInterface:
-            calls:
-                - ['setContainer', ['@service_container']]
-
     _defaults:
-        autowire: true
         autoconfigure: true
+
+    _instanceof:
+        Contao\CoreBundle\Framework\FrameworkAwareInterface:
+            calls:
+                - [setFramework, ['@contao.framework']]
 
     trilobit.zipuploads.cron:
         class: Trilobit\ZipuploadsBundle\Cron\Cron

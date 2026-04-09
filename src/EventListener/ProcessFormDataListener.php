@@ -24,7 +24,7 @@ use Contao\System;
 
 #[\AllowDynamicProperties] class ProcessFormDataListener
 {
-    public function __construct(\Terminal42\NotificationCenterBundle\NotificationCenter|null $notificationCenter)
+    public function __construct(?\Terminal42\NotificationCenterBundle\NotificationCenter $notificationCenter)
     {
         $this->notificationCenter = $notificationCenter;
     }
@@ -32,7 +32,8 @@ use Contao\System;
     /**
      * @throws \Exception
      */
-    public function __invoke(array &$submittedData, array $formData, array|null &$files, array $labels, Form $form)
+    #[\Contao\CoreBundle\DependencyInjection\Attribute\AsHook('replaceInsertTags', priority: 100)]
+    public function __invoke(array &$submittedData, array $formData, ?array &$files, array $labels, Form $form)
     {
         if (empty($formData['zipUploadedFiles'])) {
             return false;

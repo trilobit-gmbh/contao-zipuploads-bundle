@@ -13,16 +13,14 @@ namespace Trilobit\ZipuploadsBundle\Cron;
 use Contao\Config;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Monolog\ContaoContext;
-use Contao\CoreBundle\ServiceAnnotation\CronJob;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Contao\Date;
 use Contao\FilesModel;
 use Contao\System;
 use DirectoryIterator;
 use Psr\Log\LogLevel;
 
-/**
- * @CronJob("minutely")
- */
+#[AsCronJob('minutely')]
 class Cron
 {
     public function __construct(ContaoFramework $framework)
