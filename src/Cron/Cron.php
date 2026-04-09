@@ -11,13 +11,12 @@ declare(strict_types=1);
 namespace Trilobit\ZipuploadsBundle\Cron;
 
 use Contao\Config;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Monolog\ContaoContext;
-use Contao\CoreBundle\DependencyInjection\Attribute\AsCronJob;
 use Contao\Date;
 use Contao\FilesModel;
 use Contao\System;
-use DirectoryIterator;
 use Psr\Log\LogLevel;
 
 #[AsCronJob('minutely')]
@@ -72,7 +71,7 @@ class Cron
             $regex = preg_replace('/&#35;&#35;form_.*?&#35;&#35;/', '(.*?)', $regex);
 
             if (is_dir($dir)) {
-                $files = new DirectoryIterator($dir);
+                $files = new \DirectoryIterator($dir);
 
                 foreach ($files as $file) {
                     if ($file->isDot()
