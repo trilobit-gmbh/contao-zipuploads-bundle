@@ -12,3 +12,9 @@ services:
         public: true
         arguments:
             - '@contao.framework'
+            -
+    trilobit.zipuploads.listener.process_form_data:
+        class: Trilobit\ZipuploadsBundle\EventListener\ProcessFormDataListener
+        public: true
+        arguments:
+            - '@?Terminal42\NotificationCenterBundle\NotificationCenter'
