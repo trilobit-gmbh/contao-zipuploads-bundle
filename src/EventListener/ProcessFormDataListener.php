@@ -22,9 +22,11 @@ use Contao\Form;
 use Contao\StringUtil;
 use Contao\System;
 
-#[\AllowDynamicProperties] class ProcessFormDataListener
+#[\AllowDynamicProperties]
+#[\Contao\CoreBundle\DependencyInjection\Attribute\AsHook('processFormData', priority: 100)]
+class ProcessFormDataListener
 {
-    public function __construct(?\Terminal42\NotificationCenterBundle\NotificationCenter $notificationCenter)
+    public function __construct(\Terminal42\NotificationCenterBundle\NotificationCenter $notificationCenter)
     {
         $this->notificationCenter = $notificationCenter;
     }
@@ -32,7 +34,6 @@ use Contao\System;
     /**
      * @throws \Exception
      */
-    #[\Contao\CoreBundle\DependencyInjection\Attribute\AsHook('replaceInsertTags', priority: 100)]
     public function __invoke(array &$submittedData, array $formData, ?array &$files, array $labels, Form $form)
     {
         if (empty($formData['zipUploadedFiles'])) {
@@ -67,7 +68,17 @@ use Contao\System;
 
                 foreach ($uploads as $key => $value) {
                     if (null !== $fields->addToDbafs && $fields->addToDbafs) {
-                        $value = FilesModel::findByUuid($value)->path;
+                        $file = FilesModel::findByUuid($value);
+
+                        if (null === $file) {
+                            $file = FilesModel::findByPath($value);
+                        }
+
+                        if (null === $file) {
+                            continue;
+                        }
+
+                        $value = $file->path;
                     }
 
                     if (!is_file($rootDir.'/'.$value)) {
@@ -144,7 +155,7 @@ use Contao\System;
             foreach ($tmpFiles as $tmpFile) {
                 if (preg_match('/__[0-9]+\.'.preg_quote($extension, '/').'$/', $tmpFile)) {
                     $tmpFile = str_replace('.'.$extension, '', $tmpFile);
-                    $intValue = (int) substr($zipFilename, (strrpos($tmpFile, '_') + 1));
+                    $intValue = (int) substr($zipFilename, strrpos($tmpFile, '_') + 1);
 
                     $offset = max($offset, $intValue);
                 }
@@ -156,7 +167,7 @@ use Contao\System;
         // Set zip
 
         // use php zip ext because of problems with umlauts and other special characters in zipped files with the contao zipwriter
-        $objZip =  new \ZipArchive();
+        $objZip = new \ZipArchive();
 
         if (true !== $objZip->open($rootDir.'/'.$uploadFolder.'/'.$zipFilename.'.'.$extension, \ZipArchive::CREATE)) {
             throw new \RuntimeException('Cannot open '.$rootDir.'/'.$uploadFolder.'/'.$zipFilename.'.'.$extension);
