@@ -23,9 +23,6 @@ use Trilobit\ZipuploadsBundle\TrilobitZipuploadsBundle;
  */
 class Plugin implements BundlePluginInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public function getBundles(ParserInterface $parser)
     {
         return [
