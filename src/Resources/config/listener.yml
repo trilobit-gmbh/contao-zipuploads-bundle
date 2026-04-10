@@ -1,8 +1,0 @@
-services:
-    trilobit.zipuploads.processFormData:
-        class: Trilobit\ZipuploadsBundle\EventListener\ProcessFormDataListener
-        public: true
-        tags:
-            - { name: contao.hook, hook: processFormData, priority: 100 }
-        arguments:
-            - '@?Terminal42\NotificationCenterBundle\NotificationCenter'

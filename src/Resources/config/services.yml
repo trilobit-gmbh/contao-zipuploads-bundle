@@ -1,15 +1,20 @@
 services:
-    _instanceof:
-        Symfony\Component\DependencyInjection\ContainerAwareInterface:
-            calls:
-                - ['setContainer', ['@service_container']]
-
     _defaults:
-        autowire: true
         autoconfigure: true
+
+    _instanceof:
+        Contao\CoreBundle\Framework\FrameworkAwareInterface:
+            calls:
+                - [setFramework, ['@contao.framework']]
 
     trilobit.zipuploads.cron:
         class: Trilobit\ZipuploadsBundle\Cron\Cron
         public: true
         arguments:
             - '@contao.framework'
+            -
+    trilobit.zipuploads.listener.process_form_data:
+        class: Trilobit\ZipuploadsBundle\EventListener\ProcessFormDataListener
+        public: true
+        arguments:
+            - '@?Terminal42\NotificationCenterBundle\NotificationCenter'
