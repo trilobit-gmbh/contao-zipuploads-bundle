@@ -67,6 +67,26 @@ class ProcessFormDataListener
                 }
 
                 foreach ($uploads as $key => $value) {
+                    // Newer Contao versions may already submit fully resolved
+                    // file info arrays for fineUploader fields instead of a
+                    // plain UUID/path string.
+                    if (\is_array($value)) {
+                        if (!isset($value['tmp_name']) || !is_file($value['tmp_name'])) {
+                            continue;
+                        }
+
+                        $files[$fields->name . '_' . $key] = [
+                            'name'     => $value['name'] ?? \basename($value['tmp_name']),
+                            'tmp_name' => $value['tmp_name'],
+                            'error'    => $value['error'] ?? 0,
+                            'size'     => $value['size'] ?? \filesize($value['tmp_name']),
+                            'uploaded' => (\version_compare($version, '5.0', '>=')) ? true : 1,
+                            'uuid'     => $value['uuid'] ?? null,
+                        ];
+
+                        continue;
+                    }
+
                     if (null !== $fields->addToDbafs && $fields->addToDbafs) {
                         $file = FilesModel::findByUuid($value);
 
@@ -112,7 +132,21 @@ class ProcessFormDataListener
 
         foreach ($submittedData as $key => $value) {
             if (\is_array($value)) {
-                $tokens['form_'.$key] = implode(',', $value);
+                // A value may itself contain nested arrays (e.g. resolved
+                // file info arrays from a fineUploader field), which cannot
+                // be imploded directly.
+                $flatValues = array_map(
+                    static function ($item) {
+                        if (\is_array($item)) {
+                            return $item['name'] ?? implode(',', array_filter($item, 'is_scalar'));
+                        }
+
+                        return $item;
+                    },
+                    $value
+                );
+
+                $tokens['form_'.$key] = implode(',', $flatValues);
             } else {
                 $tokens['form_'.$key] = $value;
             }
